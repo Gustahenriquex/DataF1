@@ -1,0 +1,65 @@
+[project]
+name = "f1-intelligence"
+version = "0.1.0"
+description = "Strategic analytics platform for Formula 1: data pipeline, race & strategy analytics, ML models and a data-grounded AI race engineer."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    # Data sources
+    "fastf1>=3.8.3,<3.9",
+    "httpx>=0.28",
+    "tenacity>=9.0",
+    # Data handling
+    "pandas>=2.2",
+    "numpy>=2.0",
+    "pyarrow>=17.0",
+    "pandera[pandas]>=0.24",
+    # Storage
+    "sqlalchemy>=2.0.36",
+    "psycopg[binary]>=3.2",
+    "dbt-core>=1.11,<1.13",
+    "dbt-postgres>=1.9",
+    # App / config
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "typer>=0.15",
+    "streamlit>=1.45",
+    "plotly>=6.0",
+]
+
+[project.scripts]
+f1i = "f1i.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "ruff>=0.12",
+    "pre-commit>=4.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/f1i"]
+
+# ---------------------------------------------------------------- tooling ---
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "PTH"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers -m 'not network and not integration'"
+markers = [
+    "network: test calls a live external API (run with -m network)",
+    "integration: test needs a running PostgreSQL (run with -m integration)",
+]

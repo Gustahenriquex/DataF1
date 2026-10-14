@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Secrets — never commit real credentials
+.env
+.env.*
+!.env.example
+
+# Data & runtime artefacts (sources' licences forbid redistributing raw data)
+data/
+logs/
+
+# dbt
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+dbt/.user.yml
+
+# IDEs / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

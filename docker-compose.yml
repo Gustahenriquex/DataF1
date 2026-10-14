@@ -1,0 +1,27 @@
+# Local infrastructure. Values come from `.env` (copy `.env.example`).
+#   docker compose up -d postgres     start the database
+#   docker compose down               stop it (data persists in the named volume)
+#   docker compose down -v            stop it AND delete all data
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: f1i-postgres
+    environment:
+      POSTGRES_DB: ${F1I_DB_NAME:-f1i}
+      POSTGRES_USER: ${F1I_DB_USER:-f1i}
+      POSTGRES_PASSWORD: ${F1I_DB_PASSWORD:?set F1I_DB_PASSWORD in .env}
+    ports:
+      # Bound to localhost only: the database is never exposed to the network.
+      - "127.0.0.1:${F1I_DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:
