@@ -27,7 +27,7 @@ licence and data notice, `f1i doctor`.
 - [x] `uv run ruff check .` and `ruff format --check .` pass
 - [x] `uv run f1i --help` / `f1i doctor` run
 - [ ] PostgreSQL reachable: `f1i doctor` → postgres OK, `pytest -m integration` passes
-- [ ] CI green on GitHub
+- [x] CI green on GitHub (lint, unit tests, integration tests against PostgreSQL 17)
 
 ### Phase 1 — Executable MVP (vertical slice) · 12–20 h · P0
 Season 2025 race sessions: Jolpica results/standings + FastF1 laps, stints, pit stops,
