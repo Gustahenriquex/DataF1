@@ -59,5 +59,44 @@ def doctor(
         raise typer.Exit(code=1)
 
 
+@app.command()
+def ingest(
+    season: int = typer.Option(..., help="Season year, e.g. 2025."),
+    rounds: str = typer.Option(None, help="Rounds like '1-3,7' (default: all completed)."),
+    refresh: bool = typer.Option(False, help="Re-download instead of using raw files."),
+) -> None:
+    """Download a season (Jolpica + FastF1) and load it into the raw schema."""
+    from f1i.pipeline import ingest_season
+
+    report = ingest_season(get_settings(), season, rounds, refresh)
+    typer.echo(f"loaded rounds: {report.loaded_rounds}")
+    for round_, reason in report.failed_rounds.items():
+        typer.echo(f"[FAIL] round {round_}: {reason}")
+    if report.failed_rounds:
+        raise typer.Exit(code=1)
+
+
+@app.command()
+def build() -> None:
+    """Run dbt (models + tests) to rebuild the staging and marts schemas."""
+    from f1i.pipeline import run_dbt
+
+    if not run_dbt(get_settings(), ["build"]):
+        raise typer.Exit(code=1)
+
+
+@app.command("app")
+def run_app() -> None:
+    """Open the Streamlit dashboard."""
+    import subprocess
+    import sys
+
+    from f1i.config import PROJECT_ROOT
+
+    script = PROJECT_ROOT / "app" / "streamlit_app.py"
+    command = [sys.executable, "-m", "streamlit", "run", str(script)]
+    raise typer.Exit(subprocess.call(command, cwd=PROJECT_ROOT))  # cwd: .streamlit/config.toml
+
+
 if __name__ == "__main__":
     app()

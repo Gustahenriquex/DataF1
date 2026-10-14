@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     log_format: Literal["text", "json"] = "text"
 
     # PostgreSQL
-    db_host: str = "localhost"
+    db_host: str = "127.0.0.1"  # not "localhost": on Windows it tries IPv6 first and stalls
     db_port: int = Field(default=5432, ge=1, le=65535)
     db_name: str = "f1i"
     db_user: str = "f1i"

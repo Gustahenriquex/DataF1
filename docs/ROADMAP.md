@@ -34,9 +34,9 @@ Season 2025 race sessions: Jolpica results/standings + FastF1 laps, stints, pit 
 track status → raw Parquet → PostgreSQL → dbt staging/marts → Streamlit pages: Season
 Overview, Race Analysis (lap-time evolution, stints), Driver Comparison (race pace,
 consistency).
-- [ ] One command ingests, one builds, one opens the dashboard **with real data**
-- [ ] Transformation tests pass (clean-lap filter, stint derivation)
-- [ ] Data coverage report generated for the ingested sessions
+- [x] One command ingests, one builds, one opens the dashboard **with real data**
+- [x] Transformation tests pass (clean-lap filter, stint derivation)
+- [x] Data coverage report generated for the ingested sessions
 
 ### Phase 2 — Data platform · 15–25 h · P0
 Backfill 2018–2026 (to date), retries/back-off, rate-limit throttling, run manifest,

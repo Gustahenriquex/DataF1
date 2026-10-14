@@ -32,7 +32,7 @@ _STANDARD_ATTRS = frozenset(_BLANK_RECORD.__dict__) | {"message", "asctime"}
 # (e.g. pytest's caplog) and never duplicates ours.
 _OWNED_MARKER = "_f1i_owned"
 
-_NOISY_LOGGERS = ("httpx", "httpcore", "urllib3", "requests_cache", "matplotlib")
+_NOISY_LOGGERS = ("httpx", "httpcore", "urllib3", "requests_cache", "matplotlib", "fastf1")
 
 
 class JsonFormatter(logging.Formatter):

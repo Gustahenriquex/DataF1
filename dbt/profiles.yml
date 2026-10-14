@@ -1,0 +1,13 @@
+# Credentials come from environment variables (set by `f1i build` from .env).
+f1i:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('F1I_DB_HOST', '127.0.0.1') }}"
+      port: "{{ env_var('F1I_DB_PORT', '5432') | int }}"
+      user: "{{ env_var('F1I_DB_USER', 'f1i') }}"
+      password: "{{ env_var('F1I_DB_PASSWORD') }}"
+      dbname: "{{ env_var('F1I_DB_NAME', 'f1i') }}"
+      schema: analytics
+      threads: 4

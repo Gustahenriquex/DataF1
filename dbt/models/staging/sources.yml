@@ -1,0 +1,10 @@
+version: 2
+sources:
+  - name: raw
+    schema: raw
+    description: Source payloads loaded by `f1i ingest` (Jolpica-F1 and FastF1).
+    tables:
+      - name: jolpica_results
+      - name: jolpica_driver_standings
+      - name: fastf1_laps
+      - name: fastf1_stints

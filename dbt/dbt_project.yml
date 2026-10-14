@@ -1,0 +1,15 @@
+name: f1i
+version: "0.1.0"
+profile: f1i
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+models:
+  f1i:
+    staging:
+      +schema: staging
+      +materialized: view
+    marts:
+      +schema: marts
+      +materialized: table

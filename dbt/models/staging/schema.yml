@@ -1,0 +1,23 @@
+version: 2
+models:
+  - name: stg_results
+    columns:
+      - name: season
+        data_tests: [not_null]
+      - name: round
+        data_tests: [not_null]
+      - name: driver_id
+        data_tests: [not_null]
+  - name: stg_laps
+    columns:
+      - name: driver
+        data_tests: [not_null]
+      - name: lap_number
+        data_tests: [not_null]
+      - name: compound
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [SOFT, MEDIUM, HARD, INTERMEDIATE, WET, UNKNOWN]
+              config:
+                severity: warn
