@@ -26,7 +26,7 @@ licence and data notice, `f1i doctor`.
 - [x] `uv run pytest` passes (offline)
 - [x] `uv run ruff check .` and `ruff format --check .` pass
 - [x] `uv run f1i --help` / `f1i doctor` run
-- [ ] PostgreSQL reachable: `f1i doctor` → postgres OK, `pytest -m integration` passes
+- [x] PostgreSQL reachable: `f1i doctor` → postgres OK, `pytest -m integration` passes
 - [x] CI green on GitHub (lint, unit tests, integration tests against PostgreSQL 17)
 
 ### Phase 1 — Executable MVP (vertical slice) · 12–20 h · P0
