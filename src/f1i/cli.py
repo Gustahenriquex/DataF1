@@ -66,15 +66,17 @@ def ingest(
     refresh: bool = typer.Option(False, help="Re-download instead of using raw files."),
 ) -> None:
     """Download season(s) (Jolpica + FastF1) and load them into the raw schema."""
+    from f1i.keep_awake import keep_awake
     from f1i.pipeline import ingest_season, parse_rounds
 
     failed = 0
-    for year in parse_rounds(season, []):
-        report = ingest_season(get_settings(), year, rounds, refresh)
-        typer.echo(f"{year}: loaded rounds {report.loaded_rounds}")
-        for round_, reason in report.failed_rounds.items():
-            typer.echo(f"[FAIL] {year} round {round_}: {reason}")
-        failed += len(report.failed_rounds)
+    with keep_awake():  # backfills take hours; idle sleep would freeze the process
+        for year in parse_rounds(season, []):
+            report = ingest_season(get_settings(), year, rounds, refresh)
+            typer.echo(f"{year}: loaded rounds {report.loaded_rounds}")
+            for round_, reason in report.failed_rounds.items():
+                typer.echo(f"[FAIL] {year} round {round_}: {reason}")
+            failed += len(report.failed_rounds)
     if failed:
         typer.echo(
             f"{failed} round(s) failed; re-run the same command to retry "
