@@ -105,7 +105,7 @@ def test_other_errors_are_not_retried(error: Exception) -> None:
     def load() -> pd.DataFrame:
         raise error
 
-    with pytest.raises(ValueError):
+    with pytest.raises(type(error)):
         _with_rate_limit_waits(load, sleep=slept.append)
     assert slept == []
 
