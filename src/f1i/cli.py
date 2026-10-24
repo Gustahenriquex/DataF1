@@ -61,18 +61,25 @@ def doctor(
 
 @app.command()
 def ingest(
-    season: int = typer.Option(..., help="Season year, e.g. 2025."),
+    season: str = typer.Option(..., help="Season(s): '2025', '2022-2026' or '2022,2024'."),
     rounds: str = typer.Option(None, help="Rounds like '1-3,7' (default: all completed)."),
     refresh: bool = typer.Option(False, help="Re-download instead of using raw files."),
 ) -> None:
-    """Download a season (Jolpica + FastF1) and load it into the raw schema."""
-    from f1i.pipeline import ingest_season
+    """Download season(s) (Jolpica + FastF1) and load them into the raw schema."""
+    from f1i.pipeline import ingest_season, parse_rounds
 
-    report = ingest_season(get_settings(), season, rounds, refresh)
-    typer.echo(f"loaded rounds: {report.loaded_rounds}")
-    for round_, reason in report.failed_rounds.items():
-        typer.echo(f"[FAIL] round {round_}: {reason}")
-    if report.failed_rounds:
+    failed = 0
+    for year in parse_rounds(season, []):
+        report = ingest_season(get_settings(), year, rounds, refresh)
+        typer.echo(f"{year}: loaded rounds {report.loaded_rounds}")
+        for round_, reason in report.failed_rounds.items():
+            typer.echo(f"[FAIL] {year} round {round_}: {reason}")
+        failed += len(report.failed_rounds)
+    if failed:
+        typer.echo(
+            f"{failed} round(s) failed; re-run the same command to retry "
+            "(downloaded rounds are not fetched again)"
+        )
         raise typer.Exit(code=1)
 
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from f1i.pipeline import parse_rounds
+from f1i.pipeline import _with_rate_limit_waits, parse_rounds
 from f1i.transform.laps import derive_stints, flag_clean_laps
 
 
@@ -77,3 +77,38 @@ def test_derive_stints() -> None:
 )
 def test_parse_rounds(spec: str | None, expected: list[int]) -> None:
     assert parse_rounds(spec, [3, 1, 2]) == expected
+
+
+def test_rate_limited_loads_wait_and_retry() -> None:
+    outcomes = iter([RuntimeError("any API: 500 calls/h"), pd.DataFrame({"x": [1]})])
+    slept: list[float] = []
+
+    def load() -> pd.DataFrame:
+        outcome = next(outcomes)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome
+
+    result = _with_rate_limit_waits(load, sleep=slept.append, wait_s=60)
+
+    assert result["x"].tolist() == [1]
+    assert slept == [60]
+
+
+def test_other_errors_are_not_retried() -> None:
+    slept: list[float] = []
+
+    def load() -> pd.DataFrame:
+        raise ValueError("session does not exist")
+
+    with pytest.raises(ValueError):
+        _with_rate_limit_waits(load, sleep=slept.append)
+    assert slept == []
+
+
+def test_rate_limit_retries_are_bounded() -> None:
+    def load() -> pd.DataFrame:
+        raise RuntimeError("any API: 500 calls/h")
+
+    with pytest.raises(RuntimeError):
+        _with_rate_limit_waits(load, sleep=lambda _s: None, max_waits=2)
