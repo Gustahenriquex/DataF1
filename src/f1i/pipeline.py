@@ -28,12 +28,9 @@ MAX_RATE_LIMIT_WAITS = 8  # up to 2 h per round
 
 def _is_rate_limited(exc: Exception) -> bool:
     message = str(exc)
-    return (
-        type(exc).__name__ == "RateLimitExceededError"
-        or "calls/h" in message
-        # FastF1 logs (not raises) a limit hit mid-load, then the laps are missing.
-        or "has not been loaded yet" in message
-    )
+    # Only explicit rate-limit errors are retried. "Data not loaded" also happens when the
+    # server refuses access (e.g. HTTP 401), and retrying that would just hammer it.
+    return type(exc).__name__ == "RateLimitExceededError" or "calls/h" in message
 
 
 @dataclass

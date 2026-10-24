@@ -95,11 +95,15 @@ def test_rate_limited_loads_wait_and_retry() -> None:
     assert slept == [60]
 
 
-def test_other_errors_are_not_retried() -> None:
+@pytest.mark.parametrize(
+    "error",
+    [ValueError("session does not exist"), RuntimeError("Laps has not been loaded yet")],
+)
+def test_other_errors_are_not_retried(error: Exception) -> None:
     slept: list[float] = []
 
     def load() -> pd.DataFrame:
-        raise ValueError("session does not exist")
+        raise error
 
     with pytest.raises(ValueError):
         _with_rate_limit_waits(load, sleep=slept.append)
